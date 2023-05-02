@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+<link rel="stylesheet" href="../../reveal.mod/css/theme/current.css">
+<link rel="stylesheet" href="../../reveal.mod/css/custom.css">
+<script src="../../reveal.mod/js/d3.v4.min.js"></script>
+<script src="../../reveal.mod/js/d3-color.v1.min.js"></script>
+<script src="../../reveal.mod/js/d3-interpolate.v1.min.js"></script>
+<script src="../../reveal.mod/js/d3-scale-chromatic.v1.min.js"></script>
+
+<body>
+<div class="reveal">
+<script>
+
+
+function gridData(dim, data_func) {
+    var data = new Array();
+    var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
+    var ypos = 1;
+    var width = 50;
+    var height = 50;
+
+    // iterate for rows 
+    for (var row = 0; row < dim; row++) {
+        data.push( new Array() );
+
+        // iterate for cells/columns inside rows
+        for (var column = 0; column < dim; column++) {
+            data[row].push({
+                x: xpos,
+                y: ypos,
+                width: width,
+                height: height,
+                row: row,
+                column: column,
+                weight: data_func(row, column),
+            })
+            // increment the x position. I.e. move it over by 50 (width variable)
+            xpos += width;
+        }
+        // reset the x position after a row is complete
+        xpos = 1;
+        // increment the y position for the next row. Move it down 50 (height variable)
+        ypos += height; 
+    }
+    return data;
+}
+
+var svg = d3.select("body").append("svg")
+            .attr('viewBox','0 0 500 1000')
+            .attr('preserveAspectRatio','none')
+            .attr("overflow", "visible")
+            .style("width", '100%')
+            .style("height", '100%')
+            .style("display", "block")
+            .style("position", "absolute")
+            .style("top", "0%")
+            .style("left", "0%")
+
+function create_grid(color, data, classname, offset, text) {
+
+  svg.append("g").attr("id", classname)
+
+	var row = svg.select("#"+classname).selectAll(".row")
+			.data(data)
+			.enter().append("g")
+			.attr("class", "row");
+
+	var column = row.selectAll("." + classname)
+			.data(function(d) { return d; })
+			.enter().append("rect")
+			.attr("class",classname)
+      .attr("id", function(d) { return classname + d.row + "_" + d.column; })
+			.attr("x", function(d) { return d.x + offset[0]; })
+			.attr("y", function(d) { return d.y + offset[1]; })
+			.attr("width", function(d) { return d.width; })
+			.attr("height", function(d) { return d.height; })
+			.style("fill", color)
+      .style("opacity", function(d) { return d.weight; })
+			.style("stroke", "var(--dark-background-color)")
+			.style("stroke-width", "0.5vmin");
+	
+  if (text) {
+    row.selectAll(".text" + classname)
+        .data(function(d) { return d; })
+        .enter().append("text")
+        .attr("class","text" + classname)
+        .attr("id", function(d) { return "text_" + classname + d.row + "_" + d.column; })
+        .attr("transform", function(d) { return "translate(" + (d.x + offset[0] + 25) + "," + (d.y + offset[1]+25) + ")"; })
+        .style("text-anchor", "middle")
+        .text(function(d) { return Math.round(d.weight*255); })
+        .style("opacity", 1.0)
+        .style("stroke", "var(--dark-background-color)")
+        .style("font-size", "4vmin");
+  }
+	return column
+}
+            
+var weights = [0.6, 0.6, 0.6, 0.6]
+
+var channel_grid_data = gridData(8, () => { return Math.random()})
+var map_grid_data = gridData(4, (i,j) =>{ return d3.max([channel_grid_data[2*i][2*j].weight,
+                                                         channel_grid_data[2*i+1][2*j].weight,
+                                                         channel_grid_data[2*i][2*j+1].weight,
+                                                         channel_grid_data[2*i+1][2*j+1].weight]); })
+var map = create_grid("var(--default-color)", map_grid_data, "map", [150, 600], true).style("opacity", 0.5)
+d3.selectAll(".textmap").style("opacity", 0.0)
+d3.selectAll(".map").style("opacity", 0.0)
+var channel = create_grid("var(--default-color)", channel_grid_data, "channel", [50, 50], true)
+var kernel = create_grid("var(--red-color)", gridData(2, (i,j) => { return weights[i*2+j] }), "filter", [50,50], false)
+
+
+var _transitions = [
+	
+	() => {
+    var dim = 4
+    var speed = 500
+    var offset = [50,50]
+    for (var row = 0; row < dim; row++) {
+        for (var column = 0; column < dim; column++) {
+          kernel.transition().delay(row*dim*speed + column*speed).duration(speed)
+                .attr('x', function(d) { return d.x + offset[0]; })
+                .attr('y', function(d) { return d.y + offset[1]; })
+          offset[0] += 100;
+          map.transition().delay(row*dim*speed + column*speed).duration(speed).style("opacity", function(d) { if(d.row < row || d.row == row && d.column <= column) return d.weight; else return 0.0; })
+          d3.selectAll(".textmap").transition().delay(row*dim*speed + column*speed).duration(speed).style("opacity", function(d) { if(d.row < row || d.row == row && d.column <= column) return d.weight; else return 0.0; })
+        }
+        offset[0] = 50;
+        offset[1] += 100;
+    }
+			
+	},
+]
+
+var _inverse_transitions = [
+
+	() => {
+    kernel.transition().duration(500)
+            .attr('x', function(d) { return d.x + 50; })
+            .attr('y', function(d) { return d.y + 50; })
+    d3.selectAll(".textmap").transition().duration(500).style("opacity", 0.0)
+    d3.selectAll(".map").transition().duration(500).style("opacity", 0.0)
+	},
+
+]
+  
+</script>
+</div>
+</body>

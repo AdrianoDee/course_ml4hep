@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+<link rel="stylesheet" href="../../reveal.mod/css/theme/current.css">
+<link rel="stylesheet" href="../../reveal.mod/css/custom.css">
+<script src="../../reveal.mod/js/d3.v4.min.js"></script>
+<script src="../../reveal.mod/js/d3-color.v1.min.js"></script>
+<script src="../../reveal.mod/js/d3-interpolate.v1.min.js"></script>
+<script src="../../reveal.mod/js/d3-scale-chromatic.v1.min.js"></script>
+
+<body>
+<div class="reveal">
+<script>
+
+var width = 960
+var height = 500
+
+var x = d3.scaleLinear().range([width/10, width]);
+var y = d3.scaleLinear().range([height*4/5, height*1/5]);
+x.domain([0.0, 1.0]);
+y.domain([0.0, 3.0]);
+
+var svg = d3.select("body").append("svg")
+            .attr('viewBox','0 0 960 500')
+						.attr('preserveAspectRatio','none')
+            .attr("overflow", "visible")
+						.style("width", '50%')
+						.style("height", '50%')
+						.style("display", "block")
+						.style("position", "absolute")
+						.style("top", "0%")
+						.style("left", "25%");
+
+svg.append("g").attr("id", "func")
+
+var data = d3.range(20).map(function(d) { return d; })
+var cross_line_bkg = d3.line().x(function(d) { return x(d/20); }).y(function(d) { return y(-Math.log(1-d/20)) }).curve(d3.curveCardinal)
+var cross_path_bkg = svg.select("#func").append('path').attr('d', cross_line_bkg(data)).attr('stroke', 'var(--red-color)').attr('stroke-width', "1vmin").attr('fill', 'none').style('opacity', 1.0)
+var data = d3.range(1,21).map(function(d) { return d; })
+var cross_line_sig = d3.line().x(function(d) { return x(d/20); }).y(function(d) { return y(-Math.log(d/20)) }).curve(d3.curveCardinal)
+var cross_path_sig = svg.select("#func").append('path').attr('d', cross_line_sig(data)).attr('stroke', 'var(--blue-color)').attr('stroke-width', "1vmin").attr('fill', 'none').style('opacity', 1.0)
+
+var _transitions = [
+]
+
+var _inverse_transitions = [
+]
+  
+svg.append("g")
+    .attr("class", "axis usual_axis")
+    .attr("transform", "translate(0," + height*4/5 + ")")
+    .call(d3.axisBottom(x).ticks(3));
+
+svg.append("text")
+   .attr("class", "text")
+   .attr("transform", "translate(" + (width/2) + " ," + (height) + ")")
+   .style("text-anchor", "middle")
+   .text("f(x)");
+
+svg.append("g")
+    .attr("class", "axis usual_axis")
+    .attr("transform", "translate(" + width/10 + ",0)")
+    .call(d3.axisLeft(y).ticks(3));
+
+svg.append("text")
+   .attr("class", "text")
+   .attr("transform", "translate(" + 15 + " ," + (height*0.5) + ")" + "rotate(-90)")
+   .style("text-anchor", "middle")
+   .text("loss"); 
+
+</script>
+</div>
+</body>
