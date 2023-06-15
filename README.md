@@ -20,10 +20,9 @@ The workshops are provided as [jupyter notebooks](http://jupyter.org/), which ca
 
 - [GANs](https://github.com/AdrianoDee/course_ml4hep/blob/main/notebooks/gans/GAN.ipynb) <a target="_blank" href="https://colab.research.google.com/github/AdrianoDee/course_ml4hep/blob/main/notebooks/gans/GAN.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
-- [RNNs](https://github.com/AdrianoDee/course_ml4hep/blob/main/notebooks/RNNs/RNNs.ipynb) <a target="_blank" href="https://colab.research.google.com/github/AdrianoDee/course_ml4hep/blob/main/notebooks/RNNs/RNNs.ipynb">
-<img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+
+- [RNNs](https://github.com/AdrianoDee/course_ml4hep/blob/main/notebooks/RNNs/RNNs.ipynb) <a target="_blank" href="https://colab.research.google.com/github/AdrianoDee/course_ml4hep/blob/main/notebooks/RNNs/RNNs.ipynb"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+
 
 ## Further Reading
 
