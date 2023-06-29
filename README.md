@@ -23,6 +23,8 @@ The workshops are provided as [jupyter notebooks](http://jupyter.org/), which ca
 
 - [RNNs](https://github.com/AdrianoDee/course_ml4hep/blob/main/notebooks/rnns/RNNs.ipynb) <a target="_blank" href="https://colab.research.google.com/github/AdrianoDee/course_ml4hep/blob/main/notebooks/rnns/RNNs.ipynb"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 
+- [GNNs](https://github.com/AdrianoDee/course_ml4hep/blob/main/notebooks/gnns/GNN.ipynb) <a target="_blank" href="https://colab.research.google.com/github/AdrianoDee/course_ml4hep/blob/main/notebooks/gnns/GNN.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 
 ## Further Reading
 
